@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Droplet, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Droplet className="h-7 w-7 text-red-600 fill-red-600" />
+              <img src="/logo.png" alt="Cellula" className="h-14 w-14" />
               <span className="text-xl font-bold">Cellula</span>
             </div>
             <p className="text-sm text-muted-foreground">

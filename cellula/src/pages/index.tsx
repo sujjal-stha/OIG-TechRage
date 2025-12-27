@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { 
-  Droplet, 
+ 
   UserPlus, 
   TestTube, 
   Search, 
@@ -59,7 +59,7 @@ const Index = () => {
   const stats = [
     { icon: Users, value: "12,500+", label: "Registered Donors", color: "text-blue-600" },
     { icon: Building2, value: "45", label: "Partner Hospitals", color: "text-purple-600" },
-    { icon: Droplet, value: "850+", label: "Lives Saved", color: "text-primary" },
+    { icon: () => <img src="/logo.png" alt="Lives Saved" className="h-full w-full" />, value: "850+", label: "Lives Saved", color: "text-primary" },
     { icon: Globe, value: "7", label: "Provinces Covered", color: "text-green-600" },
   ];
 
@@ -260,7 +260,7 @@ const Index = () => {
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-medium text-primary mb-4">
-                  <Droplet className="h-3 w-3 text-red-600 fill-red-600" />
+                  <img src="/logo.png" alt="Cellula" className="h-6 w-6" />
                   Why Us
                 </div>
                 <h2 className="mb-4 text-2xl font-bold text-foreground md:text-3xl lg:text-4xl">Why Stem Cell Donation Matters</h2>
@@ -429,7 +429,7 @@ const Index = () => {
           <div className="container">
             <div className="rounded-2xl bg-gradient-to-br from-red-50 to-red-100 border border-red-200 p-8 text-center md:p-10 lg:p-12 relative overflow-hidden shadow-lg">
               <div className="relative z-10">
-                <Droplet className="mx-auto mb-3 h-10 w-10 text-red-600 fill-red-600" />
+                <img src="/logo.png" alt="Cellula" className="mx-auto mb-2 h-24 w-24" />
                 <h2 className="mb-3 text-xl font-bold text-gray-900 md:text-2xl lg:text-3xl">Ready to Save a Life?</h2>
                 <p className="mx-auto mb-6 max-w-2xl text-gray-700 text-sm md:text-base leading-relaxed">
                   Join Nepal's growing community of stem cell donors. Registration takes just 5 minutes 

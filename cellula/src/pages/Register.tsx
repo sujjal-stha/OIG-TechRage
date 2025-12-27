@@ -46,6 +46,28 @@ const Register = () => {
   const [sampleMethod, setSampleMethod] = useState<"courier" | "hospital" | null>(null);
   const [consentChecked, setConsentChecked] = useState(false);
 
+  // Form data state
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    dob: "",
+    gender: "",
+    bloodType: "",
+    phone: "",
+    email: "",
+    password: "",
+    emergencyContact: "",
+    emergencyPhone: "",
+    province: "",
+    district: "",
+    municipality: "",
+    street: ""
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleNext = () => {
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
@@ -59,6 +81,26 @@ const Register = () => {
   };
 
   const handleSubmit = () => {
+    // Generate unique donor ID
+    const donorId = `CL-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+    
+    // Prepare donor data
+    const donorData = {
+      ...formData,
+      id: donorId,
+      registrationDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      status: "Sample Pending",
+      sampleMethod: sampleMethod === "courier" ? "Courier Pickup" : "Hospital Visit",
+      scheduledDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      scheduledTime: "Morning (9 AM - 12 PM)"
+    };
+
+    // Store in localStorage
+    localStorage.setItem('donorData', JSON.stringify(donorData));
+    localStorage.setItem('donorEmail', formData.email);
+    localStorage.setItem('donorPassword', formData.password);
+    localStorage.setItem('isNewRegistration', 'true'); // Mark as new registration
+    
     navigate("/donor/dashboard");
   };
 
@@ -127,21 +169,36 @@ const Register = () => {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="Enter your first name" />
+                      <Input 
+                        id="firstName" 
+                        placeholder="Enter your first name"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Enter your last name" />
+                      <Input 
+                        id="lastName" 
+                        placeholder="Enter your last name"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="dob">Date of Birth</Label>
-                      <Input id="dob" type="date" />
+                      <Input 
+                        id="dob" 
+                        type="date"
+                        value={formData.dob}
+                        onChange={(e) => handleInputChange('dob', e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label>Gender</Label>
-                      <Select>
+                      <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select gender" />
                         </SelectTrigger>
@@ -155,7 +212,7 @@ const Register = () => {
                   </div>
                   <div className="space-y-2">
                     <Label>Blood Type</Label>
-                    <Select>
+                    <Select value={formData.bloodType} onValueChange={(value) => handleInputChange('bloodType', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select blood type" />
                       </SelectTrigger>
@@ -176,19 +233,52 @@ const Register = () => {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+977 98XXXXXXXX" />
+                    <Input 
+                      id="phone" 
+                      type="tel" 
+                      placeholder="+977 98XXXXXXXX"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="your@email.com" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="your@email.com"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="Create a password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="emergencyContact">Emergency Contact Name</Label>
-                    <Input id="emergencyContact" placeholder="Emergency contact name" />
+                    <Input 
+                      id="emergencyContact" 
+                      placeholder="Emergency contact name"
+                      value={formData.emergencyContact}
+                      onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="emergencyPhone">Emergency Contact Phone</Label>
-                    <Input id="emergencyPhone" type="tel" placeholder="+977 98XXXXXXXX" />
+                    <Input 
+                      id="emergencyPhone" 
+                      type="tel" 
+                      placeholder="+977 98XXXXXXXX"
+                      value={formData.emergencyPhone}
+                      onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
+                    />
                   </div>
                 </div>
               )}
@@ -198,7 +288,7 @@ const Register = () => {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <Label>Province</Label>
-                    <Select>
+                    <Select value={formData.province} onValueChange={(value) => handleInputChange('province', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select province" />
                       </SelectTrigger>
@@ -214,16 +304,31 @@ const Register = () => {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="district">District</Label>
-                      <Input id="district" placeholder="Enter district" />
+                      <Input 
+                        id="district" 
+                        placeholder="Enter district"
+                        value={formData.district}
+                        onChange={(e) => handleInputChange('district', e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="municipality">Municipality</Label>
-                      <Input id="municipality" placeholder="Enter municipality" />
+                      <Input 
+                        id="municipality" 
+                        placeholder="Enter municipality"
+                        value={formData.municipality}
+                        onChange={(e) => handleInputChange('municipality', e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="street">Street Address</Label>
-                    <Input id="street" placeholder="Enter street address" />
+                    <Input 
+                      id="street" 
+                      placeholder="Enter street address"
+                      value={formData.street}
+                      onChange={(e) => handleInputChange('street', e.target.value)}
+                    />
                   </div>
                 </div>
               )}
@@ -338,15 +443,35 @@ const Register = () => {
                     <dl className="grid gap-3 text-sm">
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Name:</dt>
-                        <dd className="font-medium">Ram Sharma</dd>
+                        <dd className="font-medium">{formData.firstName} {formData.lastName}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Email:</dt>
+                        <dd className="font-medium">{formData.email}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Phone:</dt>
+                        <dd className="font-medium">{formData.phone}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Blood Type:</dt>
-                        <dd className="font-medium">O+</dd>
+                        <dd className="font-medium">{formData.bloodType}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Date of Birth:</dt>
+                        <dd className="font-medium">{formData.dob}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Gender:</dt>
+                        <dd className="font-medium capitalize">{formData.gender}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Location:</dt>
-                        <dd className="font-medium">Kathmandu, Bagmati Province</dd>
+                        <dd className="font-medium">{formData.municipality}, {formData.district}, {formData.province}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Address:</dt>
+                        <dd className="font-medium">{formData.street}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-muted-foreground">Sample Method:</dt>

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Droplet, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const Header = () => {
@@ -20,7 +20,7 @@ const Header = () => {
       <div className="container flex h-14 items-center gap-6">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <Droplet className="h-6 w-6 text-red-600 fill-red-600" />
+          <img src="/logo.png" alt="Cellula" className="h-12 w-12" />
           <span className="text-2xl font-bold text-foreground tracking-tight" style={{ fontFamily: '"Lucida Calligraphy", cursive' }}>Cellula</span>
         </Link>
 

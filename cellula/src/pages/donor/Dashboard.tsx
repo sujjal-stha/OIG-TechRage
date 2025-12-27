@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Footer from "@/components/layout/Footer";
+import { QRCodeCanvas } from "qrcode.react";
 import { 
   User, 
-  Droplet,
+
   CheckCircle2,
   Clock,
   Truck,
@@ -15,22 +17,100 @@ import {
   AlertCircle,
   HelpCircle,
   Settings,
-  LogOut
+  LogOut,
+  Download,
+  QrCode
 } from "lucide-react";
 
 const DonorDashboard = () => {
+  const navigate = useNavigate();
+  const qrRef = useRef<HTMLDivElement>(null);
   const [isAvailable, setIsAvailable] = useState(true);
-
-  const donorData = {
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [donorData, setDonorData] = useState({
     id: "CL-2024-12587",
-    name: "Ram Sharma",
+    firstName: "Ram",
+    lastName: "Sharma",
     bloodType: "O+",
     registrationDate: "December 15, 2024",
     status: "Sample Pending",
     sampleMethod: "Courier Pickup",
     scheduledDate: "December 28, 2024",
     scheduledTime: "Morning (9 AM - 12 PM)",
+    email: "",
+    phone: "",
+    password: "",
+    province: "",
+    district: "",
+    municipality: "",
+    street: ""
+  });
+
+  useEffect(() => {
+    // Check if this is a new registration
+    const newRegistration = localStorage.getItem('isNewRegistration');
+    if (newRegistration === 'true') {
+      setIsNewUser(true);
+      // Clear the flag after showing welcome message
+      setTimeout(() => {
+        localStorage.removeItem('isNewRegistration');
+        setIsNewUser(false);
+      }, 5000); // Clear after 5 seconds
+    }
+
+    // Load donor data from localStorage
+    const storedData = localStorage.getItem('donorData');
+    const storedPassword = localStorage.getItem('donorPassword');
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setDonorData({
+        id: parsedData.id,
+        firstName: parsedData.firstName,
+        lastName: parsedData.lastName,
+        bloodType: parsedData.bloodType,
+        registrationDate: parsedData.registrationDate,
+        status: parsedData.status,
+        sampleMethod: parsedData.sampleMethod,
+        scheduledDate: parsedData.scheduledDate,
+        scheduledTime: parsedData.scheduledTime,
+        email: parsedData.email,
+        phone: parsedData.phone,
+        password: storedPassword || parsedData.password || "",
+        province: parsedData.province,
+        district: parsedData.district,
+        municipality: parsedData.municipality,
+        street: parsedData.street
+      });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    localStorage.removeItem('donorSession');
+    navigate("/donor/login");
   };
+
+  const downloadQRCode = () => {
+    const canvas = qrRef.current?.querySelector('canvas');
+    if (canvas) {
+      const url = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${donorData.id}-qrcode.png`;
+      link.click();
+    }
+  };
+
+  // Prepare QR code data
+  const qrData = JSON.stringify({
+    id: donorData.id,
+    name: `${donorData.firstName} ${donorData.lastName}`,
+    email: donorData.email,
+    password: donorData.password,
+    bloodType: donorData.bloodType,
+    phone: donorData.phone,
+    registrationDate: donorData.registrationDate
+  });
 
   const statusSteps = [
     { id: 1, label: "Registered", completed: true, current: false },
@@ -63,19 +143,65 @@ const DonorDashboard = () => {
       
       <main className="flex-1 py-8">
         <div className="container max-w-6xl">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Welcome back, {donorData.name}</h1>
-              <p className="text-muted-foreground">Manage your donor profile and track your journey</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <LogOut className="h-5 w-5" />
-              </Button>
-            </div>
+          <div className="mb-8">
+            <Card className="border-2 border-red-200 shadow-xl bg-gradient-to-br from-red-50 via-white to-rose-50 overflow-hidden relative">
+              {/* Decorative background pattern */}
+              <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
+                <User className="w-full h-full text-red-600" />
+              </div>
+              
+              <CardContent className="py-6 relative z-10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 via-red-600 to-rose-600 shadow-2xl transform hover:scale-105 transition-transform">
+                        <User className="h-8 w-8 text-white" />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 h-6 w-6 bg-green-500 border-4 border-white rounded-full" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>
+                          Welcome!!
+                        </h1>
+                      </div>
+                      <p className="text-xl font-semibold text-red-700 mb-2">
+                        {donorData.firstName} {donorData.lastName}
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline" className="border-red-300 text-red-800 bg-red-100 font-semibold px-3 py-1">
+                          <span className="text-xs text-red-600 mr-1">ID:</span> {donorData.id}
+                        </Badge>
+                        <Badge variant="outline" className="border-red-300 text-red-800 bg-red-100 font-semibold px-3 py-1">
+                          <span className="text-xs text-red-600 mr-1">Blood Type:</span> {donorData.bloodType}
+                        </Badge>
+                        <div className="flex items-center gap-1.5 text-sm text-gray-700 bg-white/60 px-3 py-1.5 rounded-full border border-gray-200">
+                          <Clock className="h-4 w-4 text-blue-600" />
+                          <span className="font-medium">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-11 w-11 rounded-xl hover:bg-red-100 hover:text-red-700 transition-all"
+                    >
+                      <Settings className="h-5 w-5" />
+                    </Button>
+                    <Button 
+                      type="button"
+                      onClick={handleLogout}
+                      className="gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all px-6 h-11 rounded-xl font-semibold"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
@@ -85,7 +211,7 @@ const DonorDashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Droplet className="h-5 w-5 text-red-600 fill-red-600" />
+                    <img src="/logo.png" alt="Cellula" className="h-12 w-12" />
                     Your Donor Journey
                   </CardTitle>
                   <CardDescription>Track your progress to becoming an active donor</CardDescription>
@@ -240,7 +366,7 @@ const DonorDashboard = () => {
                     <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
                       <User className="h-10 w-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold">{donorData.name}</h3>
+                    <h3 className="text-lg font-semibold">{donorData.firstName} {donorData.lastName}</h3>
                     <p className="text-sm text-muted-foreground">Donor ID: {donorData.id}</p>
                     
                     <div className="mt-4 flex items-center gap-2">
@@ -296,6 +422,42 @@ const DonorDashboard = () => {
                 </CardContent>
               </Card>
 
+              {/* QR Code Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <QrCode className="h-5 w-5" />
+                    Your Donor QR Code
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Contains your registration information
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center">
+                    <div ref={qrRef} className="bg-white p-4 rounded-lg border-2 border-gray-200">
+                      <QRCodeCanvas
+                        value={qrData}
+                        size={180}
+                        level="H"
+                        includeMargin={true}
+                      />
+                    </div>
+                    <Button
+                      onClick={downloadQRCode}
+                      variant="outline"
+                      className="mt-4 w-full gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download QR Code
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center mt-3">
+                      Scan this code for quick access to your donor information
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Quick Actions */}
               <Card>
                 <CardHeader>
@@ -310,7 +472,11 @@ const DonorDashboard = () => {
                     <Calendar className="mr-2 h-4 w-4" />
                     View Schedule
                   </Button>
-                  <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start text-destructive hover:text-destructive"
+                    onClick={handleLogout}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </Button>
