@@ -30,15 +30,94 @@ const steps = [
 ];
 
 const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-const provinces = [
-  "Province 1",
-  "Madhesh Province",
-  "Bagmati Province",
-  "Gandaki Province",
-  "Lumbini Province",
-  "Karnali Province",
-  "Sudurpashchim Province",
-];
+
+// Nepal Administrative Data Structure
+const nepalAdminData: any = {
+  "Bagmati Province": {
+    "Kathmandu": {
+      municipalities: ["Kathmandu Metropolitan", "Kirtipur Municipality", "Budhanilkantha Municipality"],
+      wards: Array.from({length: 32}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Bhaktapur": {
+      municipalities: ["Bhaktapur Municipality", "Madhyapur Thimi Municipality", "Suryabinayak Municipality"],
+      wards: Array.from({length: 15}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Lalitpur": {
+      municipalities: ["Lalitpur Metropolitan", "Godawari Municipality", "Mahalaxmi Municipality"],
+      wards: Array.from({length: 29}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Chitwan": {
+      municipalities: ["Bharatpur Metropolitan", "Rapti Municipal", "Kalika Municipality"],
+      wards: Array.from({length: 29}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Province 1": {
+    "Morang": {
+      municipalities: ["Biratnagar Metropolitan", "Urlabari Municipality", "Sundarharaicha Municipality"],
+      wards: Array.from({length: 20}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Jhapa": {
+      municipalities: ["Damak Municipality", "Birtamod Municipality", "Mechinagar Municipality"],
+      wards: Array.from({length: 15}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Gandaki Province": {
+    "Kaski": {
+      municipalities: ["Pokhara Metropolitan", "Annapurna Rural Municipality"],
+      wards: Array.from({length: 33}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Tanahun": {
+      municipalities: ["Bhanu Municipality", "Bhimad Municipality", "Myagde Rural Municipality"],
+      wards: Array.from({length: 12}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Nawalpur": {
+      municipalities: ["Gaindakot Metropolitan", "Ratnanagar Municipality", "Kawasoti Municipality"],
+      wards: Array.from({length: 26}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Lumbini Province": {
+    "Rupandehi": {
+      municipalities: ["Butwal Sub-Metropolitan", "Siddharthanagar Municipality", "Tilottama Municipality"],
+      wards: Array.from({length: 19}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Kapilvastu": {
+      municipalities: ["Kapilvastu Municipality", "Buddhabhumi Municipality"],
+      wards: Array.from({length: 12}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Madhesh Province": {
+    "Dhanusha": {
+      municipalities: ["Janakpur Sub-Metropolitan", "Chhireshwarnath Municipality"],
+      wards: Array.from({length: 25}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Mahottari": {
+      municipalities: ["Jaleshwar Municipality", "Bardibas Municipality"],
+      wards: Array.from({length: 14}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Karnali Province": {
+    "Surkhet": {
+      municipalities: ["Birendranagar Municipality", "Gurbhakot Municipality"],
+      wards: Array.from({length: 12}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Dailekh": {
+      municipalities: ["Narayan Municipality", "Dullu Municipality"],
+      wards: Array.from({length: 11}, (_, i) => `Ward ${i + 1}`)
+    }
+  },
+  "Sudurpashchim Province": {
+    "Kailali": {
+      municipalities: ["Dhangadhi Sub-Metropolitan", "Tikapur Municipality"],
+      wards: Array.from({length: 19}, (_, i) => `Ward ${i + 1}`)
+    },
+    "Kanchanpur": {
+      municipalities: ["Bhimdatta Municipality", "Punarbas Municipality"],
+      wards: Array.from({length: 15}, (_, i) => `Ward ${i + 1}`)
+    }
+  }
+};
+
+const provinces = Object.keys(nepalAdminData);
 
 const Register = () => {
   const navigate = useNavigate();
@@ -61,14 +140,91 @@ const Register = () => {
     province: "",
     district: "",
     municipality: "",
+    ward: "",
     street: ""
   });
 
+  // Cascading dropdown state
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
+  const [availableMunicipalities, setAvailableMunicipalities] = useState<string[]>([]);
+  const [availableWards, setAvailableWards] = useState<string[]>([]);
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Handle cascading updates
+    if (field === 'province') {
+      // Reset dependent fields
+      setFormData(prev => ({ ...prev, district: '', municipality: '', ward: '' }));
+      setAvailableMunicipalities([]);
+      setAvailableWards([]);
+      // Set available districts for selected province
+      if (value && nepalAdminData[value]) {
+        setAvailableDistricts(Object.keys(nepalAdminData[value]));
+      } else {
+        setAvailableDistricts([]);
+      }
+    } else if (field === 'district') {
+      // Reset dependent fields
+      setFormData(prev => ({ ...prev, municipality: '', ward: '' }));
+      setAvailableWards([]);
+      // Set available municipalities for selected district
+      if (formData.province && value && nepalAdminData[formData.province]?.[value]) {
+        setAvailableMunicipalities(nepalAdminData[formData.province][value].municipalities);
+      } else {
+        setAvailableMunicipalities([]);
+      }
+    } else if (field === 'municipality') {
+      // Reset ward
+      setFormData(prev => ({ ...prev, ward: '' }));
+      // Set available wards for selected municipality
+      if (formData.province && formData.district && nepalAdminData[formData.province]?.[formData.district]) {
+        setAvailableWards(nepalAdminData[formData.province][formData.district].wards);
+      } else {
+        setAvailableWards([]);
+      }
+    }
   };
 
   const handleNext = () => {
+    // Validate current step before proceeding
+    if (currentStep === 1) {
+      // Step 1: Personal Details validation
+      if (!formData.firstName || !formData.lastName || !formData.dob || !formData.gender || !formData.bloodType) {
+        alert('Please fill in all required fields: First Name, Last Name, Date of Birth, Gender, and Blood Type');
+        return;
+      }
+    } else if (currentStep === 2) {
+      // Step 2: Contact Information validation
+      if (!formData.phone || !formData.email || !formData.password) {
+        alert('Please fill in all required fields: Phone Number, Email Address, and Password');
+        return;
+      }
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        alert('Please enter a valid email address');
+        return;
+      }
+      // Basic phone validation
+      if (formData.phone.length < 10) {
+        alert('Please enter a valid phone number');
+        return;
+      }
+    } else if (currentStep === 3) {
+      // Step 3: Address validation
+      if (!formData.province || !formData.district || !formData.municipality || !formData.ward || !formData.street) {
+        alert('Please fill in all required fields: Province, District, Municipality, Ward, and Street Address');
+        return;
+      }
+    } else if (currentStep === 4) {
+      // Step 4: Sample Method validation
+      if (!sampleMethod) {
+        alert('Please select a sample submission method');
+        return;
+      }
+    }
+    
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
     }
@@ -88,18 +244,25 @@ const Register = () => {
     const donorData = {
       ...formData,
       id: donorId,
-      registrationDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      status: "Sample Pending",
+      registrationDate: new Date().toISOString(),
+      status: "pending", // pending → sample_received → report_submitted → approved
+      sampleStatus: "pending", // pending → collected → processing → completed
       sampleMethod: sampleMethod === "courier" ? "Courier Pickup" : "Hospital Visit",
-      scheduledDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      scheduledTime: "Morning (9 AM - 12 PM)"
+      scheduledDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      scheduledTime: "Morning (9 AM - 12 PM)",
+      age: new Date().getFullYear() - new Date(formData.dob).getFullYear()
     };
 
+    // Get existing donors list
+    const existingDonors = JSON.parse(localStorage.getItem('allDonors') || '[]');
+    existingDonors.push(donorData);
+    
     // Store in localStorage
+    localStorage.setItem('allDonors', JSON.stringify(existingDonors));
     localStorage.setItem('donorData', JSON.stringify(donorData));
     localStorage.setItem('donorEmail', formData.email);
     localStorage.setItem('donorPassword', formData.password);
-    localStorage.setItem('isNewRegistration', 'true'); // Mark as new registration
+    localStorage.setItem('isNewRegistration', 'true');
     
     navigate("/donor/dashboard");
   };
@@ -168,37 +331,40 @@ const Register = () => {
                 <div className="space-y-6">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">First Name *</Label>
                       <Input 
                         id="firstName" 
                         placeholder="Enter your first name"
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">Last Name *</Label>
                       <Input 
                         id="lastName" 
                         placeholder="Enter your last name"
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        required
                       />
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="dob">Date of Birth</Label>
+                      <Label htmlFor="dob">Date of Birth *</Label>
                       <Input 
                         id="dob" 
                         type="date"
                         value={formData.dob}
                         onChange={(e) => handleInputChange('dob', e.target.value)}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Gender</Label>
-                      <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
+                      <Label>Gender *</Label>
+                      <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)} required>
                         <SelectTrigger>
                           <SelectValue placeholder="Select gender" />
                         </SelectTrigger>
@@ -211,8 +377,8 @@ const Register = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Blood Type</Label>
-                    <Select value={formData.bloodType} onValueChange={(value) => handleInputChange('bloodType', value)}>
+                    <Label>Blood Type *</Label>
+                    <Select value={formData.bloodType} onValueChange={(value) => handleInputChange('bloodType', value)} required>
                       <SelectTrigger>
                         <SelectValue placeholder="Select blood type" />
                       </SelectTrigger>
@@ -232,33 +398,36 @@ const Register = () => {
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <Input 
                       id="phone" 
                       type="tel" 
                       placeholder="+977 98XXXXXXXX"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Email Address *</Label>
                     <Input 
                       id="email" 
                       type="email" 
                       placeholder="your@email.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Password *</Label>
                     <Input 
                       id="password" 
                       type="password" 
                       placeholder="Create a password"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -287,8 +456,8 @@ const Register = () => {
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label>Province</Label>
-                    <Select value={formData.province} onValueChange={(value) => handleInputChange('province', value)}>
+                    <Label>Province *</Label>
+                    <Select value={formData.province} onValueChange={(value) => handleInputChange('province', value)} required>
                       <SelectTrigger>
                         <SelectValue placeholder="Select province" />
                       </SelectTrigger>
@@ -301,33 +470,74 @@ const Register = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="district">District</Label>
-                      <Input 
-                        id="district" 
-                        placeholder="Enter district"
-                        value={formData.district}
-                        onChange={(e) => handleInputChange('district', e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="municipality">Municipality</Label>
-                      <Input 
-                        id="municipality" 
-                        placeholder="Enter municipality"
-                        value={formData.municipality}
-                        onChange={(e) => handleInputChange('municipality', e.target.value)}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label>District *</Label>
+                    <Select 
+                      value={formData.district} 
+                      onValueChange={(value) => handleInputChange('district', value)} 
+                      required
+                      disabled={!formData.province}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={formData.province ? "Select district" : "Select province first"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableDistricts.map((district) => (
+                          <SelectItem key={district} value={district}>
+                            {district}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="street">Street Address</Label>
+                    <Label>Municipality *</Label>
+                    <Select 
+                      value={formData.municipality} 
+                      onValueChange={(value) => handleInputChange('municipality', value)} 
+                      required
+                      disabled={!formData.district}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={formData.district ? "Select municipality" : "Select district first"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableMunicipalities.map((municipality) => (
+                          <SelectItem key={municipality} value={municipality}>
+                            {municipality}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Ward *</Label>
+                    <Select 
+                      value={formData.ward} 
+                      onValueChange={(value) => handleInputChange('ward', value)} 
+                      required
+                      disabled={!formData.municipality}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={formData.municipality ? "Select ward" : "Select municipality first"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableWards.map((ward) => (
+                          <SelectItem key={ward} value={ward}>
+                            {ward}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="street">Street Address *</Label>
                     <Input 
                       id="street" 
-                      placeholder="Enter street address"
+                      placeholder="Enter street address (e.g., House No, Tole name)"
                       value={formData.street}
                       onChange={(e) => handleInputChange('street', e.target.value)}
+                      required
                     />
                   </div>
                 </div>

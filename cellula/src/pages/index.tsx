@@ -59,7 +59,7 @@ const Index = () => {
   const stats = [
     { icon: Users, value: "12,500+", label: "Registered Donors", color: "text-blue-600" },
     { icon: Building2, value: "45", label: "Partner Hospitals", color: "text-purple-600" },
-    { icon: () => <img src="/logo.png" alt="Lives Saved" className="h-full w-full" />, value: "850+", label: "Lives Saved", color: "text-primary" },
+    { icon: (props: any) => <img src="/logo.png" alt="Lives Saved" className="h-12 w-12 mx-auto" />, value: "850+", label: "Lives Saved", color: "text-primary" },
     { icon: Globe, value: "7", label: "Provinces Covered", color: "text-green-600" },
   ];
 
