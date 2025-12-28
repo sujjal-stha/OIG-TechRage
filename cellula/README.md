@@ -1,73 +1,118 @@
-# React + TypeScript + Vite
+CELLULA – Project Overview (Point Format)
+1. Purpose
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Digital stem cell donor registry and transplant coordination system
 
-Currently, two official plugins are available:
+Built for institutional use by the Nepal Stem Cell Research Centre
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Aims to reduce transplant delays and manual workload
 
-## React Compiler
+2. Problems Addressed
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+Fragmented and offline donor records
 
-## Expanding the ESLint configuration
+Manual request approval processes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+No real-time donor availability tracking
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Delays in emergency stem cell transplants
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Limited coordination between hospitals and registry
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. Solution Provided
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Centralized, secure digital platform
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Real-time donor database management
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Automated matching and notification system
+
+Controlled access for hospitals and administrators
+
+4. User Roles
+
+Admin (Stem Cell Research Centre)
+
+Hospitals / Transplant Units
+
+Registered Stem Cell Donors
+
+5. Key Features
+
+Donor registration and verification
+
+Storage of medical data (blood group, HLA status, age, location)
+
+Hospital request submission system
+
+Admin approval and prioritization
+
+Donor–patient matching logic
+
+SMS / notification alerts to donors
+
+Request status tracking
+
+Role-based access control
+
+6. System Workflow
+
+Donors register and provide consent
+
+Hospitals submit stem cell requests
+
+Admin verifies and approves requests
+
+System identifies eligible donors
+
+Notifications sent to selected donors
+
+Hospital coordination begins after confirmation
+
+7. Security & Compliance
+
+Encrypted storage of medical data
+
+Consent-based data sharing
+
+Access logging and auditing
+
+Designed for healthcare data protection standards
+
+8. Deployment Model
+
+Owned and operated by Nepal Stem Cell Research Centre
+
+Centralized hosting (government or approved cloud)
+
+Customizable workflows and policies
+
+Scalable for national use
+
+9. Business Model
+
+Licensed software solution
+
+One-time deployment cost
+
+Optional maintenance and upgrades
+
+Staff training and technical support
+
+10. Expected Impact
+
+Faster stem cell transplant coordination
+
+Reduced patient mortality due to delays
+
+Improved donor utilization
+
+Data-driven planning for healthcare authorities
+
+11. Project Status
+
+Prototype / MVP
+
+Ready for pilot testing and institutional evaluation
+12. Tech stack
+react, tailwind tsx for frontend local storage for now 
