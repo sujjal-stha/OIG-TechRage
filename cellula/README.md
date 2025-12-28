@@ -1,118 +1,91 @@
-CELLULA – Project Overview (Point Format)
-1. Purpose
+CELLULA - Digital Stem Cell Registry and Transplant Coordination
 
-Digital stem cell donor registry and transplant coordination system
+## Overview
+- Centralized digital registry for stem cell donors and transplant coordination
+- Built for the Nepal Stem Cell Research Centre to cut transplant delays and reduce manual workload
+- Prototype/MVP focused on pilot testing and workflow validation
 
-Built for institutional use by the Nepal Stem Cell Research Centre
+## Problems Addressed
+- Fragmented/offline donor records and slow request approvals
+- No real-time donor availability tracking, causing emergency delays
+- Limited coordination between hospitals, registry staff, and donors
 
-Aims to reduce transplant delays and manual workload
+## Core Solution
+- Web-based platform with role-based access (Admin, Hospital, Donor)
+- Real-time donor database management with matching and notifications
+- Request tracking with admin triage/prioritization
 
-2. Problems Addressed
+## Features by Role
+- **Admin:** approve/triage hospital requests, manage donor records, oversee status and audit trails
+- **Hospital/Transplant Unit:** submit and monitor stem cell requests, view matched donors, coordinate confirmations
+- **Donor:** register with consent, maintain medical/profile data (blood group, HLA status, age, location), receive alerts
 
-Fragmented and offline donor records
+## How It Works (MVP)
+- Frontend: React + TypeScript + Vite, styled with Tailwind CSS, Radix primitives, and shadcn-inspired UI
+- State/persistence: browser localStorage only (suitable for demos/pilots; replace with secured backend for production)
+- Routing: React Router with separate flows for admin, hospital, and donor views
 
-Manual request approval processes
+## Project Status and Gaps
+- Prototype/MVP ready for pilots
+- Known gaps for production: authentication/SSO, secure backend with database, encrypted at-rest storage, real SMS/email delivery, full audit logging, backup/DR
 
-No real-time donor availability tracking
+## Getting Started (Local)
+Prerequisites: Node.js 18+ or Bun. Bun is recommended because the repo ships with a `bun.lockb`.
 
-Delays in emergency stem cell transplants
+1) Install dependencies
+```
+bun install
+# or: npm install
+```
+2) Run the app in dev mode
+```
+bun run dev
+# or: npm run dev
+```
+3) Build and preview
+```
+bun run build
+bun run preview
+# lint: bun run lint
+```
 
-Limited coordination between hospitals and registry
+## Scripts
+- `dev` - start Vite dev server
+- `build` - production build
+- `build:dev` - development-mode build
+- `preview` - preview built assets
+- `lint` - run ESLint
 
-3. Solution Provided
+## Project Layout (high level)
+```
+cellula/
+	src/
+		pages/           # route views (admin, hospital, donor dashboards & auth)
+		components/      # UI primitives (shadcn/radix) and layout (Header/Footer)
+		hooks/           # custom hooks (e.g., mobile detection, toast helpers)
+		lib/             # shared utilities
+		main.tsx         # app entry
+		App.tsx          # router and layout composition
+	public/            # static assets
+	tailwind.config.ts # design tokens and Tailwind setup
+	vite.config.ts     # bundler configuration
+```
 
-Centralized, secure digital platform
+## Security and Compliance Notes
+- Current MVP keeps data in localStorage; do not use for real patient/donor data
+- Production should add: authenticated API with RBAC, encryption in transit/at rest, audit logging, consent tracking, retention policies, backups/DR, and vetted hosting
 
-Real-time donor database management
+## Roadmap (suggested)
+- Integrate secure backend (API + database) and real auth/SSO
+- Implement audit logs, access reporting, and admin approvals with service-level targets
+- Add reliable notifications (SMS/email) with delivery status
+- Enhance donor availability updates and hospital coordination workflows
+- Add observability (metrics/traces) and deployment automation
 
-Automated matching and notification system
+## Contact
+Built for the Nepal Stem Cell Research Centre. For pilots or collaboration, coordinate with the project admins.
 
-Controlled access for hospitals and administrators
 
-4. User Roles
+## ppt link : https://www.canva.com/design/DAG8rdozdaM/i_MRUNhNmwDdpdTANItisQ/view?utm_content=DAG8rdozdaM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8426fad43f 
 
-Admin (Stem Cell Research Centre)
-
-Hospitals / Transplant Units
-
-Registered Stem Cell Donors
-
-5. Key Features
-
-Donor registration and verification
-
-Storage of medical data (blood group, HLA status, age, location)
-
-Hospital request submission system
-
-Admin approval and prioritization
-
-Donor–patient matching logic
-
-SMS / notification alerts to donors
-
-Request status tracking
-
-Role-based access control
-
-6. System Workflow
-
-Donors register and provide consent
-
-Hospitals submit stem cell requests
-
-Admin verifies and approves requests
-
-System identifies eligible donors
-
-Notifications sent to selected donors
-
-Hospital coordination begins after confirmation
-
-7. Security & Compliance
-
-Encrypted storage of medical data
-
-Consent-based data sharing
-
-Access logging and auditing
-
-Designed for healthcare data protection standards
-
-8. Deployment Model
-
-Owned and operated by Nepal Stem Cell Research Centre
-
-Centralized hosting (government or approved cloud)
-
-Customizable workflows and policies
-
-Scalable for national use
-
-9. Business Model
-
-Licensed software solution
-
-One-time deployment cost
-
-Optional maintenance and upgrades
-
-Staff training and technical support
-
-10. Expected Impact
-
-Faster stem cell transplant coordination
-
-Reduced patient mortality due to delays
-
-Improved donor utilization
-
-Data-driven planning for healthcare authorities
-
-11. Project Status
-
-Prototype / MVP
-
-Ready for pilot testing and institutional evaluation
-12. Tech stack
-react, tailwind tsx for frontend local storage for now 
+sys arc : in public folder
