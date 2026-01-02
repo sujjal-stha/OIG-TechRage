@@ -89,5 +89,4 @@ Built for the Nepal Stem Cell Research Centre. For pilots or collaboration, coor
 ## ppt link : https://www.canva.com/design/DAG8rdozdaM/i_MRUNhNmwDdpdTANItisQ/view?utm_content=DAG8rdozdaM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8426fad43f 
 
 sys arc : in public folder
-sd
-sdf
+vakkkkkkkkkkkk vayena yesto hawa taal ko vyo
